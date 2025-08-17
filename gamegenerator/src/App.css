@@ -45,7 +45,6 @@ body {
   margin-bottom: 2rem;
 }
 
-
 .centered-input {
   display: flex;
   flex-direction: column;
@@ -67,9 +66,9 @@ input[type="text"] {
 }
 
 .team-names-grid-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .team-names-grid {
@@ -168,4 +167,50 @@ input[type="text"] {
   margin-top: 2rem;
   color: #777;
   font-size: 0.9rem;
+}
+
+/* --- PDF-specifika stilar --- */
+@media print {
+  /* Generella justeringar för utskrift */
+  body {
+    background-color: #fff;
+    color: #000;
+  }
+  
+  .app-container, .main-content {
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* Döljer element som inte behövs i PDF:en */
+  .header, .footer, .input-section, .error-message, .generate-button, .save-pdf-button {
+    display: none;
+  }
+
+  /* Justerar layouten för spelschemat för bättre PDF-generering */
+  .schedule-container {
+    display: flex; /* Ändra till flexbox */
+    flex-direction: column; /* Staplar innehållet vertikalt */
+    margin-top: 1rem;
+    gap: 1rem;
+  }
+
+  /* Förhindrar att omgångskort bryts upp över sidor */
+  .round-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd; /* Behåller gränsen på korten */
+  }
+
+  .round-card h3 {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 0.25rem;
+    font-size: 1.1rem;
+  }
+
+  .round-card, .match-item, .team-name {
+    box-shadow: none; /* Tar bort eventuella skuggor */
+  }
 }
