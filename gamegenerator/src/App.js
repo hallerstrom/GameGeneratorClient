@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import './App.css';
-import { jsPDF } from 'jspdf'; // Importera jsPDF
+import { jsPDF } from 'jspdf';
 
 function App() {
   const [numTeams, setNumTeams] = useState('');
@@ -8,10 +8,8 @@ function App() {
   const [schedule, setSchedule] = useState(null);
   const [error, setError] = useState('');
 
-  // Använd useRef för att referera till spelschemat i DOM
   const scheduleRef = useRef(null);
 
-  // Hanterar ändring i antalet lag
   const handleNumTeamsChange = (e) => {
     const count = parseInt(e.target.value);
     setNumTeams(e.target.value);
@@ -23,15 +21,13 @@ function App() {
     }
   };
 
-  // Hanterar ändringar i namnen på lagen
   const handleTeamNameChange = (e, index) => {
     const newTeamNames = [...teamNames];
     newTeamNames[index] = e.target.value;
     setTeamNames(newTeamNames);
   };
 
-  // Anropar backend för att generera spelschemat
-  const handleGenerateSchedule = async () => {
+  const handleGenerateSchedule = () => {
     setError('');
     setSchedule(null);
 
@@ -42,16 +38,11 @@ function App() {
       return;
     }
 
-    try {
-      const simulatedSchedule = generateSimulatedSchedule(teams);
-      setSchedule(simulatedSchedule);
-
-    } catch (err) {
-      setError('Ett fel uppstod vid generering av spelschemat.');
-    }
+    // Nu anropas den lokala funktionen direkt
+    const simulatedSchedule = generateSimulatedSchedule(teams);
+    setSchedule(simulatedSchedule);
   };
 
-  // Enkel round-robin-algoritm för att skapa ett simulerat schema
   const generateSimulatedSchedule = (teams) => {
     let tempTeams = [...teams];
     const rounds = [];
@@ -77,15 +68,13 @@ function App() {
     }
     return rounds;
   };
-
-  // Funktion för att spara spelschemat som en PDF-fil
+  
   const handleSavePdf = () => {
     const doc = new jsPDF();
     const margin = 20;
     let yPos = margin;
     const pageWidth = doc.internal.pageSize.getWidth();
 
-    // Lägg till en titel
     doc.setFontSize(22);
     doc.text('Spelschema', pageWidth / 2, yPos, { align: 'center' });
     yPos += 20;
@@ -93,19 +82,16 @@ function App() {
     doc.setFontSize(12);
     
     schedule.forEach((round, index) => {
-      // Kontrollera om det behövs en ny sida
       if (yPos > doc.internal.pageSize.getHeight() - 40) {
         doc.addPage();
         yPos = margin;
       }
 
-      // Lägg till omgångs-rubrik
       doc.setFontSize(16);
       doc.text(`Omgång ${index + 1}`, margin, yPos);
       yPos += 10;
       doc.setFontSize(12);
 
-      // Lägg till matcherna
       round.forEach(match => {
         if (yPos > doc.internal.pageSize.getHeight() - 20) {
           doc.addPage();
@@ -114,7 +100,7 @@ function App() {
         doc.text(`${match.homeTeam} vs ${match.awayTeam}`, margin + 5, yPos);
         yPos += 10;
       });
-      yPos += 5; // Extra mellanrum mellan omgångar
+      yPos += 5;
     });
 
     doc.save('spelschema.pdf');
@@ -163,7 +149,6 @@ function App() {
 
         {schedule && (
           <div className="schedule-section">
-            {/* Använd ref på spelschemat för PDF-generering (om du vill) */}
             <div className="schedule-container" ref={scheduleRef}>
               {schedule.map((round, index) => (
                 <div key={index} className="round-card">
